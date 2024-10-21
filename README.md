@@ -53,7 +53,7 @@ Further categorization and analysis steps.
 
 Calculate empowerment at different time steps: 
 
-    $E_t: \mathcal{I} \rightarrow \mathbb{R}^+$. 
+$E_{t}: \mathcal{I} \rightarrow \mathbb{R}^+$ 
 
 Calculate empowerment at different stages of combination availabilities.
 
