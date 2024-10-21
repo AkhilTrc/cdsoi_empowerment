@@ -1,10 +1,7 @@
 import numpy as np
 
 class empowerment():
-    def __init__(self, inv_space, dimensions, n_actions=10, n_steps=1):
-        self.inv_space = inv_space
-        self.n_actions = n_actions
-        self.n_steps = n_steps
+    def __init__(self, dimensions):
         self.dimensions = dimensions
 
     def calculate_empowerment(self, invention, actions, n_steps):
@@ -30,5 +27,5 @@ class empowerment():
                 emp_perturbed = self.calculate_empowerment(perturbed, np.random.randn(10, self.dimensions), 1)
                 grad[d] = (emp_perturbed - emp_field[inv_id]) / 0.01
             gradient[inv_id] = grad
-            
+
         return gradient

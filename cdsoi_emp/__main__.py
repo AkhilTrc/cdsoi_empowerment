@@ -8,10 +8,15 @@ from cdsoi_emp.operations import Operations
 directory = "cdsoi_emp\\data"
 os.makedirs(directory)
 
-if __name__ == "__main__":
+def ndarray_to_list_dict(ndarray_dict):
+    return {k: v.tolist() for k, v in ndarray_dict.items()}
 
-    def ndarray_to_list_dict(ndarray_dict):
-        return {k: v.tolist() for k, v in ndarray_dict.items()}
+def json_dump(name, x):
+    with open(os.path.join(directory, name+".json") , 'w') as f:
+        json.dump(ndarray_to_list_dict(x), f)
+    print("{} saved to {}\n".format(name, f.name))
+
+if __name__ == "__main__":
 
     # Initialize invention space
     #
@@ -19,35 +24,27 @@ if __name__ == "__main__":
     for i in range(100):
         inv_space.add_invention(f"inv_{i}", np.random.randn(10))
     print("Invention Space: {}\n".format(inv_space.inventions))
-    with open(os.path.join(directory, "invention_space_sample.json"), 'w') as f: 
-        json.dump(ndarray_to_list_dict(inv_space.inventions), f)
-    print("Invention Space saved to {}\n".format(f.name))
+    json_dump("invention_space_sample", inv_space.inventions)
 
-    emp = empowerment(inv_space.inventions, inv_space.dimensions, n_actions=10, n_steps=1)
+    emp = empowerment(inv_space.dimensions)
     # Calculate empowerment field
     #
     emp_field = emp.empowerment_field(inv_space.inventions, n_actions=10, n_steps=1)
     print("Empowerment Field: {}\n".format(emp_field))
-    with open(os.path.join(directory, "emp_field_sample.json"), 'w') as f:
-        json.dump(ndarray_to_list_dict(emp_field), f)
-    print("Empowerment Field saved to {}\n".format(f.name))
+    json_dump("emp_field_sample", emp_field)
 
     # Calculate empowerment gradient
     #
     emp_gradient = emp.empowerment_gradient(inv_space.inventions, emp_field)
     print("Empowerment Gradient: {}\n".format(emp_gradient))
-    with open(os.path.join(directory, "emp_grad_sample.json"), 'w') as f:
-        json.dump(ndarray_to_list_dict(emp_gradient), f)
-    print("Empowerment Gradients saved to {}\n".format(f.name))
+    json_dump("emp_grad_sample", emp_gradient)
 
     op = Operations()
     # Categorize inventions
     #
     categories = op.categorize_inventions(emp_field, 5)
     print("Identified Categories (by kmeans): {}\n".format(categories))
-    with open(os.path.join(directory, "cluster_categories_sample.json") , 'w') as f:
-        json.dump(ndarray_to_list_dict(categories), f)
-    print("Clustered Categories saved to {}\n".format(f.name))
+    json_dump("cluster_categories_sample", categories)
 
     """
     
