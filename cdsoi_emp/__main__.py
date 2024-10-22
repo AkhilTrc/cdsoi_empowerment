@@ -60,15 +60,12 @@ if __name__ == "__main__":
     # 
     viz.visualize_invention_space(inv_space, categories, trajectories)
 
-    """
     # Evaluate effectiveness (simplified)
     #
     print("Number of inventions in each category:")
     print(np.bincount(list(categories.values())))
 
-    print("\nAverage empowerment for each category:")
+    print("\nAverage empowerment for each category:\n")
     for cat in set(categories.values()):
         cat_emp = [emp_field[inv_id] for inv_id, c in categories.items() if c == cat]
         print(f"Category {cat}: {np.mean(cat_emp):.2f}")
-
-    """
