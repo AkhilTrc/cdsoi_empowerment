@@ -4,9 +4,10 @@ import os
 from cdsoi_emp.invention_space import InventionSpace 
 from cdsoi_emp.empowerment import empowerment
 from cdsoi_emp.operations import Operations
+from cdsoi_emp.visualizations import Visualize
 
 directory = "cdsoi_emp\\data"
-os.makedirs(directory)
+os.makedirs(directory, exist_ok=True)
 
 def ndarray_to_list_dict(ndarray_dict):
     return {k: v.tolist() for k, v in ndarray_dict.items()}
@@ -45,21 +46,21 @@ if __name__ == "__main__":
     categories = op.categorize_inventions(emp_field, 5)
     print("Identified Categories (by kmeans): {}\n".format(categories))
     json_dump("cluster_categories_sample", categories)
-
-    """
     
     # Simulate invention trajectories
     #
     trajectories = [
-        simulate_invention_trajectory(inv_space, emp_gradient, "inv_0", steps=10),
-        simulate_invention_trajectory(inv_space, emp_gradient, "inv_50", steps=10)
+        op.simulate_invention_trajectory(inv_space, emp_gradient, "inv_0", steps=10),
+        op.simulate_invention_trajectory(inv_space, emp_gradient, "inv_50", steps=10)
     ]
     print("Tragenctories: {}\n".format(trajectories))
-
+    
+    viz = Visualize()
     # Visualize results
     # 
-    visualize_invention_space(inv_space, categories, trajectories)
+    viz.visualize_invention_space(inv_space, categories, trajectories)
 
+    """
     # Evaluate effectiveness (simplified)
     #
     print("Number of inventions in each category:")

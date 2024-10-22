@@ -55,15 +55,21 @@ def dic_to_dfcsv(dictionary, count):
 def simulate_invention_trajectory(invention_space, emp_gradient, start_inv_id, steps):
     trajectory = [start_inv_id]
     current_inv = invention_space.get_invention(start_inv_id)
-    # count = 2   # next = 3
     # dic_to_dfcsv(emp_gradient, count)
+    print("Before loop: Start Inv ID: {}\n".format(start_inv_id))
     for _ in range(steps):
-        grad = emp_gradient[start_inv_id]
-        current_inv += 0.1 * grad  # Step size of 0.1
-        new_inv_id = f"inv_{len(invention_space.inventions)}"
-        invention_space.add_invention(new_inv_id, current_inv)
-        trajectory.append(new_inv_id)
-        start_inv_id = new_inv_id
+        print("In loop: Start Inv ID: {}\n".format(start_inv_id))
+        if start_inv_id in emp_gradient:
+            grad = emp_gradient[start_inv_id]
+            current_inv += 0.1 * grad  # Step size of 0.1
+            new_inv_id = f"inv_{len(invention_space.inventions)}"
+            invention_space.add_invention(new_inv_id, current_inv)
+            trajectory.append(new_inv_id)
+            start_inv_id = new_inv_id
+        else:
+            continue
+    # print("Grad: {}; \nStart Inv ID: {};  \nNew Inv: {}; \nCurrent Inv: {}\n".format(grad, start_inv_id, new_inv_id, current_inv))
+    print("After loop: Start Inv ID: {}\n".format(start_inv_id))
     return trajectory
 
 def visualize_invention_space(invention_space, categories, trajectories):
