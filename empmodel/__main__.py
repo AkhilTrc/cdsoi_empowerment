@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from itertools import combinations_with_replacement
 from cross_validation import CrossValidation
+import cdsoi_empowerment.utils.info_logs as log
 
 if __name__ == 'main':
 
@@ -23,7 +24,8 @@ if __name__ == 'main':
     # set number of cross validation splits
     k = 10
 
-    # rewrite split_version:
+    # rewrite split_version: 
+    # to include or not include elements in test and validation sets
     #
     if split_version == 'data':
         exclude_elements_test = False

@@ -116,11 +116,11 @@ class CrossValidation():
         # save performance
         results = pd.DataFrame(result_metrics)
         if self.prediction_model == 0:
-            results.to_csv('empowermentexploration/data/gametree/{}/{}LinkPred-metrics.csv'.format(self.time, self.game_version), index=False)
+            results.to_csv('data/gametree/{}/LinkPred-metrics.csv'.format(self.time), index=False)
         elif self.prediction_model == 1:
-            results.to_csv('empowermentexploration/data/gametree/{}/{}ElemPred-metrics.csv'.format(self.time, self.game_version), index=False)
+            results.to_csv('data/gametree/{}/ElemPred-metrics.csv'.format(self.time), index=False)
         else:
-            results.to_csv('empowermentexploration/data/gametree/{}/{}EmpPred-metrics.csv'.format(self.time, self.game_version), index=False)
+            results.to_csv('data/gametree/{}/EmpPred-metrics.csv'.format(self.time), index=False)
 
     def run_cross_validation_round(self, data):
         """Runs one cross validation round with given data.
