@@ -19,7 +19,7 @@ def json_dump(name, x):
 
 if __name__ == "__main__":
 
-    # Initialize invention space
+    # Create and initialize random-sample invention space
     #
     inv_space = InventionSpace(dimensions=10)
     for i in range(100):
