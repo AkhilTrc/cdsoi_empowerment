@@ -8,7 +8,7 @@ import cdsoi_empowerment.utils.info_logs as log
 from element_prediction_model import ElementPredictionModel
 from link_prediction_model import LinkPredictionModel
 from empowerment_prediction_model import EmpowermentPredictionModel
-from prepared_dataset import PreparedDataset
+from prepare_dataset import PreparedDataset
 from sklearn.model_selection import KFold
 
 
@@ -58,11 +58,10 @@ class CrossValidation():
         print('\nRun cross validation.')
 
         # create file for predicted probabilities
-        log.create_gametreetable_file(time=self.time, prediction_model=self.prediction_model, n_elements=self.n_elements,
-                                      game_version=self.game_version, split_version=self.split_version, vector_version=self.vector_version)
+        log.create_gametreetable_file(time=self.time, prediction_model=self.prediction_model, n_elements=self.n_elements, split_version=self.split_version, vector_version=self.vector_version)
 
         # load and shuffle dataset
-        data_table = data_handle.get_combination_table(self.game_version)
+        data_table = data_handle.get_combination_table()
         data_table = data_table.sample(frac=1)      # Returns a random sample from the whole dataframe. The whole thing here. Shuffling. 
 
         #if self.prediction_model == 0:
@@ -85,12 +84,12 @@ class CrossValidation():
                     # choose a random group of elements to make up the validation set
                     val_group = element_groups[random.choice([group for group in range(len(element_groups)) if group != idx])]
 
-                    data = PreparedDataset(data_table, game_version=self.game_version, prediction_model=self.prediction_model,
+                    data = PreparedDataset(data_table, prediction_model=self.prediction_model,
                                            exclusion_elements=(test_group,val_group),
                                            oversampling=self.oversampling, custom_class_weight=self.custom_class_weight,
                                            vector_version=self.vector_version)
                 else:
-                    data = PreparedDataset(data_table, game_version=self.game_version, prediction_model=self.prediction_model,
+                    data = PreparedDataset(data_table, prediction_model=self.prediction_model,
                                            exclusion_elements=(test_group,), manual_validation=self.manual_validation,
                                            oversampling=self.oversampling, custom_class_weight=self.custom_class_weight,
                                            vector_version=self.vector_version)
@@ -104,7 +103,7 @@ class CrossValidation():
 
             for train_index, test_index in kf.split(data_table):
                 # get data
-                data = PreparedDataset((data_table.iloc[train_index], data_table.iloc[test_index]), game_version=self.game_version, prediction_model=self.prediction_model,
+                data = PreparedDataset((data_table.iloc[train_index], data_table.iloc[test_index]), prediction_model=self.prediction_model,
                                        manual_validation=self.manual_validation,
                                        oversampling=self.oversampling, custom_class_weight=self.custom_class_weight,
                                        vector_version=self.vector_version)
@@ -124,22 +123,17 @@ class CrossValidation():
 
     def run_cross_validation_round(self, data):
         """Runs one cross validation round with given data.
-
-        Args:
-            data (PreparedDataset): Prepared dataset which is fed in into the model.
-
-        Returns:
-            dict: Test metrics.
         """
+
         # evaluate model
         if self.prediction_model == 0:
-            model = LinkPredictionModel(self.time, self.round, self.epochs, self.batch_size, self.steps_per_epoch, data.class_weight, data.output_bias, self.game_version)
+            model = LinkPredictionModel(self.time, self.round, self.epochs, self.batch_size, self.steps_per_epoch, data.class_weight, data.output_bias)
             if self.manual_validation is not None or self.exclude_elements_val is True:
                 predictions, test_metrics = model.evaluate_model((data.X_train, data.X_test, data.X_val), (data.y_train, data.y_test, data.y_val))
             else:
                 predictions, test_metrics = model.evaluate_model((data.X_train, data.X_test), (data.y_train, data.y_test), validation_split=0.2)
         elif self.prediction_model == 1:
-            model = ElementPredictionModel(self.time, self.round, self.epochs, self.batch_size, self.steps_per_epoch, self.game_version, self.vector_version)
+            model = ElementPredictionModel(self.time, self.round, self.epochs, self.batch_size, self.steps_per_epoch, self.vector_version)
             if self.manual_validation is not None or self.exclude_elements_val is True:
                 predictions, test_metrics = model.evaluate_model((data.X_train, data.X_test, data.X_val),
                                                                  (data.y_train, data.y_test, data.y_val), (data.idx_train, data.idx_test))
@@ -147,15 +141,14 @@ class CrossValidation():
                 predictions, test_metrics = model.evaluate_model((data.X_train, data.X_test),
                                                                  (data.y_train, data.y_test), (data.idx_train, data.idx_test), validation_split=0.2)
         else:
-            model = EmpowermentPredictionModel(self.time, self.round, self.epochs, self.batch_size, self.steps_per_epoch, self.game_version) # data.output_bias
+            model = EmpowermentPredictionModel(self.time, self.round, self.epochs, self.batch_size, self.steps_per_epoch) # data.output_bias
             if self.manual_validation is not None or self.exclude_elements_val is True:
                 predictions, test_metrics = model.evaluate_model((data.X_train, data.X_test, data.X_val), (data.y_train, data.y_test, data.y_val))
             else:
                 predictions, test_metrics = model.evaluate_model((data.X_train, data.X_test), (data.y_train, data.y_test), validation_split=0.2)
 
         # write to file
-        log.append_gametreetable_file(data.idx_test, predictions, time=self.time, prediction_model=self.prediction_model,
-                                      game_version=self.game_version, split_version=self.split_version, vector_version=self.vector_version)
+        log.append_gametreetable_file(data.idx_test, predictions, time=self.time, prediction_model=self.prediction_model, split_version=self.split_version, vector_version=self.vector_version)
 
         # increment round
         self.round += 1
