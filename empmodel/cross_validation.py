@@ -62,7 +62,7 @@ class CrossValidation():
 
         # load and shuffle dataset
         data_table = data_handle.get_combination_table()
-        data_table = data_table.sample(frac=1)      # Returns a random sample from the whole dataframe. The whole thing here. Shuffling. 
+        data_table = data_table.sample(frac=1)      
 
         #if self.prediction_model == 0:
         if self.prediction_model != 1:
@@ -73,7 +73,7 @@ class CrossValidation():
 
         if self.exclude_elements_test is True:
             # make a k-fold cross-validation that has distinct element groups for each set
-            element_groups = helpers.split_numbers(self.n_elements, self.k)     # Element indeces in randomized groups.
+            element_groups = helpers.split_numbers(self.n_elements, self.k)     
 
             for idx, test_group in enumerate(element_groups):
                 # print info for user
@@ -115,11 +115,11 @@ class CrossValidation():
         # save performance
         results = pd.DataFrame(result_metrics)
         if self.prediction_model == 0:
-            results.to_csv('data/gametree/{}/LinkPred-metrics.csv'.format(self.time), index=False)
+            results.to_csv('cdsoi_empowerment/alldata/gametree/{}/LinkPred-metrics.csv'.format(self.time), index=False)
         elif self.prediction_model == 1:
-            results.to_csv('data/gametree/{}/ElemPred-metrics.csv'.format(self.time), index=False)
+            results.to_csv('cdsoi_empowerment/alldata/gametree/{}/ElemPred-metrics.csv'.format(self.time), index=False)
         else:
-            results.to_csv('data/gametree/{}/EmpPred-metrics.csv'.format(self.time), index=False)
+            results.to_csv('cdsoi_empowerment/alldata/gametree/{}/EmpPred-metrics.csv'.format(self.time), index=False)
 
     def run_cross_validation_round(self, data):
         """Runs one cross validation round with given data.

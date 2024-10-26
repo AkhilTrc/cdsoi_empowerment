@@ -43,7 +43,7 @@ if __name__ == 'main':
 
     # prediction_model: 0-link prediction, 1-element prediction, 2-empowerment prediction
     # 
-    print('\nRun models. Save logs to directory empowermentexploration/data/gametree/{}'.format(time))
+    print('\nRun models. Save logs to directory cdsoi_empowerment/alldata/gametree/{}'.format(time))
 
     print('\nRun link prediction model.')
     #run link prediction model
@@ -78,13 +78,13 @@ if __name__ == 'main':
     # join results
     #
     print('\nJoin model results.')
-    link_prediction_table = pd.read_csv('data/gametree/{}/LinkPredTable-{}-{}{}.csv'.format(time, split_version, vector_version, dim))
+    link_prediction_table = pd.read_csv('cdsoi_empowerment/alldata/gametree/{}/LinkPredTable-{}-{}{}.csv'.format(time, split_version, vector_version, dim))
     link_prediction_table = link_prediction_table.drop(['trueSuccess', 'trueResult'], axis=1)
     link_prediction_table = link_prediction_table.set_index(['first', 'second'])
     link_prediction_table = link_prediction_table.groupby(link_prediction_table.index).mean()
 
     if model_version == 'element':
-        element_prediction_table = pd.read_csv('data/gametree/{}/ElemPredTable-{}-{}{}.csv'.format(time, split_version, vector_version, dim))
+        element_prediction_table = pd.read_csv('cdsoi_empowerment/alldata/gametree/{}/ElemPredTable-{}-{}{}.csv'.format(time, split_version, vector_version, dim))
         element_prediction_table = element_prediction_table.drop(['trueSuccess', 'trueResult'], axis=1)
         element_prediction_table = element_prediction_table.set_index(['first', 'second'])
         element_prediction_table = element_prediction_table.groupby(element_prediction_table.index).mean()
@@ -92,7 +92,7 @@ if __name__ == 'main':
 
     else:
         print('This is EMPOWERMENT PREDICTION table: \n')
-        empowerment_prediction_table = pd.read_csv('data/gametree/{}/EmpPredTable-{}-{}{}.csv'.format(time, split_version, vector_version, dim))
+        empowerment_prediction_table = pd.read_csv('cdsoi_empowerment/alldata/gametree/{}/EmpPredTable-{}-{}{}.csv'.format(time, split_version, vector_version, dim))
         empowerment_prediction_table = empowerment_prediction_table.drop(['trueSuccess', 'trueResult'], axis=1)
         empowerment_prediction_table = empowerment_prediction_table.set_index(['first', 'second'])
         empowerment_prediction_table = empowerment_prediction_table.groupby(empowerment_prediction_table.index).mean()
@@ -111,7 +111,7 @@ if __name__ == 'main':
 
     # write resulting model to HDF5 file
     #
-    hdf5_file = 'data/gametree/{}/GametreeTable-{}-{}{}.h5'.format(time, split_version, vector_version, dim)
+    hdf5_file = 'cdsoi_empowerment/alldata/gametree/{}/GametreeTable-{}-{}{}.h5'.format(time, split_version, vector_version, dim)
     print('\nWrite as HDF5 file to loc: {}...'.format(hdf5_file))
     gametree_table.to_hdf(hdf5_file, key='gametreeTable', mode='w')
 
