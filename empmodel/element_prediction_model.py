@@ -1,5 +1,5 @@
-import cdsoi_empowerment.utils.data_handle as data_handle
-import cdsoi_empowerment.utils.helpers as helpers
+import utils.data_handle as data_handle
+import utils.helpers as helpers
 from visualization import Visualization
 import numpy as np
 import pandas as pd

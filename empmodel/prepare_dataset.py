@@ -1,4 +1,4 @@
-import cdsoi_empowerment.utils.data_handle as data_handle
+import utils.data_handle as data_handle
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler

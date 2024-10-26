@@ -1,6 +1,6 @@
 import json
 
-import cdsoi_empowerment.utils.helpers as helpers
+import utils.helpers as helpers
 import numpy as np
 import pandas as pd
 import scipy.io

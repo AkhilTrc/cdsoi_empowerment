@@ -1,9 +1,9 @@
 import random
 import pandas as pd
 
-import cdsoi_empowerment.utils.data_handle as data_handle
-import cdsoi_empowerment.utils.helpers as helpers
-import cdsoi_empowerment.utils.info_logs as log
+import utils.data_handle as data_handle
+import utils.helpers as helpers
+import utils.info_logs as log
 
 from element_prediction_model import ElementPredictionModel
 from link_prediction_model import LinkPredictionModel
