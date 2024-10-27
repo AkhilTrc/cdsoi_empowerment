@@ -4,11 +4,17 @@ import pandas as pd
 import seaborn as sns
 import fastText.python.fasttext_module.fasttext as fasttext 
 import fasttext.util
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 class Operations():
-    def __init__():
+    def __init__(self, vector_version, split_version, n_elements):
         """Initialize the Operations class
         """
+        self.empowerment = list()
+        self.vector_version = vector_version
+        self.split_version = split_version
+        self.n_elements = n_elements
 
     def get_gametree(self):
         # print info for user
@@ -120,7 +126,7 @@ class Operations():
         else:
             table_csv = pd.DataFrame(table_csv)  
             if expand is True:                      # Includes unsuccesful elements. 
-                # table_csv = self.expand_combination_table(table_csv)
+                table_csv = self.expand_combination_table(table_csv)    # Haven't included this function yet.
 
         # write to JSON file
         with open('data/{}Table.json'.format(table_type.capitalize()), 'w') as filehandle:
@@ -165,11 +171,11 @@ class Operations():
         # write element word vectors to text file for later usage
         np.savetxt('data/ElementVectors-{}{}.txt'.format(vector_version, dim), element_vectors)
 
-    def get_similarities(self, vector_version='crawl300'):
+    def get_similarities(self):
         """Initializes similarity class.
         """
         # print info for user
-        print('\nPlot similarity values for version with {} vectors.'.format(vector_version))
+        print('\nPlot similarity values for version with {} vectors.'.format(self.vector_version))
         
         # set general settings for plotting 
         # TODO: change font to Open Sans
@@ -181,10 +187,10 @@ class Operations():
         # plot values
         # self.plot_similarity_histogram()
 
-        if vector_version == 'ccen100' or vector_version == 'ccen300' or vector_version == 'crawl100' or vector_version == 'crawl300' or vector_version == 'wiki100' or vector_version == 'wiki300':
-            vectors = np.loadtxt('data/{}ElementVectors-{}.txt'.format(vector_version))
+        if self.vector_version == 'ccen100' or self.vector_version == 'ccen300' or self.vector_version == 'crawl100' or self.vector_version == 'crawl300' or self.vector_version == 'wiki100' or self.vector_version == 'wiki300':
+            vectors = np.loadtxt('data/{}ElementVectors-{}.txt'.format(self.vector_version))
         else:
-            raise ValueError('Undefined vector_version: "{}". Use "ccen100", "ccen300", "crawl100", "crawl300", "wiki100" or "wiki300" instead.'.format(vector_version))
+            raise ValueError('Undefined vector_version: "{}". Use "ccen100", "ccen300", "crawl100", "crawl300", "wiki100" or "wiki300" instead.'.format(self.vector_version))
         
         """
 
@@ -192,7 +198,7 @@ class Operations():
 
         """
 
-    def get_empowerment(self, vector_version, similarity_version):
+    def get_empowerment(self):
         empowerment = list()
 
         # set general settings for plotting 
@@ -201,13 +207,81 @@ class Operations():
                                                                                       'axes.linewidth':0.6, 'axes.edgecolor': '#9d9d9d'})      
         self.colors = ['#ffc640']
         sns.set_palette(sns.color_palette(self.colors))
-        
-        # plot values
-        # self.plot_empowerment_histogram()
-        # self.plot_empowerment_scatter_plot()
 
+        """Plot Empowerment value distribution (as a Historgram).
         """
-        
-        FOR PLOTTING EMPOWERMENT VALUES...
-        
+        plt.figure(figsize=(12,5))
+
+        for i in range(2):
+            # import parent table 
+            if i == 0:
+                with open('data/ParentTable.json', encoding='utf8') as infile:
+                    parents = json.load(infile)
+                    parents = {int(k):v for k,v in parents.items()}
+            else:
+                # Parent table where each parent has its own dict entry consisting of all resulting children.
+                with open('data/ChildrenEmpowermentTable-{}-{}.json'.format(self.split_version, self.vector_version), encoding='utf8') as infile:
+                    parents = json.load(infile)
+                    parents = {int(k):v for k,v in parents.items()}
+
+            # get array of empowerment values
+            empowerment = np.zeros(self.n_elements)
+            for element_id in range(self.n_elements):
+                if element_id in parents:
+                    empowerment[element_id] = len(parents[element_id])
+                else:
+                    empowerment[element_id] = 0
+            self.empowerment.append(empowerment)
+
+            # plot data as histogram (density)
+            plt.subplot(1,2,i+1)
+            ax = sns.histplot(data=empowerment, kde=True, bins=20)
+            #x.set_xscale('log')
+            #ax.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
+            #ax.xaxis.get_major_formatter().set_scientific(False)
+            #plt.minorticks_off()
+
+            # plot mean
+            if len(ax.lines) != 0:
+                kdeline = ax.lines[0]
+                mean = empowerment.mean()
+                print(mean)
+                height = np.interp(mean, kdeline.get_xdata(), kdeline.get_ydata())
+                ax.vlines(mean, 0, height, ls='dashed', color='#444444', linewidth=1)
+                
+            # set titles, labels
+            #plt.xlim(left=0)
+            plt.xlabel('Empowerment')
+            plt.ylabel('Count')
+            plt.tight_layout()
+            
+        # save figure
+        filename = 'cdsoi_empowerment/alldata/figures/EmpowermentHistogram-{}-{}'.format(self.split_version, self.vector_version)
+        plt.savefig('{}.svg'.format(filename))
+        plt.savefig('{}.png'.format(filename))
+        plt.savefig('{}.pdf'.format(filename))
+        plt.close()
+
+        """Plots empowerment value distribution (as a Scatterplot).
         """
+        # make scatter/regression plot 
+        g = sns.jointplot(x=self.empowerment[0], y=self.empowerment[1], kind="reg")
+        g.ax_joint.set_xscale('log')
+        g.ax_joint.set_yscale('log')
+        g.ax_joint.xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
+        g.ax_joint.xaxis.get_major_formatter().set_scientific(False)
+        g.ax_joint.yaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
+        g.ax_joint.yaxis.get_major_formatter().set_scientific(False)
+        
+        # set titles, labels
+        plt.xlabel('True empowerment')
+        plt.ylabel('Predicted empowerment')
+        plt.tight_layout()
+        
+        # save figure
+        filename = 'cdsoi_empowerment/alldata/figures/EmpowermentRegression-{}-{}'.format(self.split_version, self.vector_version)
+        plt.savefig('{}.svg'.format(filename))
+        plt.savefig('{}.png'.format(filename))
+        plt.savefig('{}.pdf'.format(filename))
+        plt.close()
+

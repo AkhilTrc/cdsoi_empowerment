@@ -1,7 +1,7 @@
 from operations import Operations
 
 if __name__ == '__main__':
-    op = Operations()
+    op = Operations('crawl300', 'data', 1000)
     op.get_gametree()
 
     op.get_tables('combination', expand=True)
@@ -15,6 +15,5 @@ if __name__ == '__main__':
     # vector.get_wordvectors('ccen', 300)
     # vector.get_wordvectors('ccen', 100)
     
-    op.get_similarities('crawl300')
-
-    op.get_empowerment('data', 'crawl300')
+    op.get_similarities()
+    op.get_empowerment()
