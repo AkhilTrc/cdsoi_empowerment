@@ -186,11 +186,11 @@ class PreparedDataset():
         # print info for user
         print('\nGet feature and label vectors.')
 
-        self.parent_table = data_handle.get_parent_table(self.game_version)
-        self.combination_table = data_handle.get_combination_table(self.game_version, csv=False)
+        self.parent_table = data_handle.get_parent_table()
+        self.combination_table = data_handle.get_combination_table(csv=False)
 
         # get list of element vectors
-        element_vectors = data_handle.get_wordvectors(self.game_version, self.vector_version)
+        element_vectors = data_handle.get_wordvectors(self.vector_version)
 
         # for element prediction model, empowerment prediction model and train and val data: reduce data to only successful data
         if self.prediction_model != 0 and (type == 0 or type == 2):

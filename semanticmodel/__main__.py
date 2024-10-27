@@ -1,7 +1,13 @@
 from operations import Operations
+from custom_empowerment import CustomEmpowerment
 
 if __name__ == '__main__':
-    op = Operations('crawl300', 'data', 1000)
+    """ Main function to run the Operations and create gametree, tables, vectors; and calculate empowerment values. 
+    """
+    n_elements = 1000
+    emp = CustomEmpowerment('crawl300', 'data', n_elements)
+
+    op = Operations('crawl300', 'data', n_elements)
     op.get_gametree()
 
     op.get_tables('combination', expand=True)

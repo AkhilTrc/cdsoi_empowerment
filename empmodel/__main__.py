@@ -111,7 +111,7 @@ if __name__ == 'main':
 
     # write resulting model to HDF5 file
     #
-    hdf5_file = 'cdsoi_empowerment/alldata/gametree/{}/GametreeTable-{}-{}{}.h5'.format(time, split_version, vector_version, dim)
+    hdf5_file = 'cdsoi_empowerment/alldata/gametree/GametreeTable-{}-{}{}.h5'.format(time, split_version, vector_version, dim)
     print('\nWrite as HDF5 file to loc: {}...'.format(hdf5_file))
     gametree_table.to_hdf(hdf5_file, key='gametreeTable', mode='w')
 
