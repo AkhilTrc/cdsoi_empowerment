@@ -5,6 +5,15 @@ import os
 import numpy as np
 import pandas as pd
 
+
+def create_directory(directory_name):
+    """Creates directory if it was not existent before.
+
+    Args:
+        directory_name (str): Directory path.
+    """
+    os.makedirs(os.path.dirname(directory_name), exist_ok=True)
+    
 def create_gametreetable_file(time=None, prediction_model=0, n_elements=None, split_version='data', vector_version='crawl300'):
     """Creates file for later result logging depending on model type (link or element prediction model).
     """
